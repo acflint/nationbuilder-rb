@@ -1,12 +1,10 @@
 require 'spec_helper'
 
 describe NationBuilder::Client do
-
   let(:client) do
     NationBuilder::Client.new('organizeralexandreschmitt',
                               '03c22256c06ed11f6bee83673addf26e02a86caa1a5127f4e0815be7223fe4a3',
-                              retries: 1
-                              )
+                              retries: 1)
   end
 
   describe '#initialize' do
@@ -22,44 +20,41 @@ describe NationBuilder::Client do
   end
 
   describe '#endpoints' do
-
     it 'should contain all defined endpoints' do
-      expect(client.endpoints.sort).to eq([
-        :basic_pages,
-        :blog_posts,
-        :blogs,
-        :calendars,
-        :campaign_data,
-        :contact_types,
-        :contacts,
-        :donations,
-        :events,
-        :exports,
-        :imports,
-        :lists,
-        :memberships,
-        :page_attachments,
-        :paths,
-        :people,
-        :people_tags,
-        :precincts,
-        :sites,
-        :survey_responses,
-        :surveys,
-        :webhooks
-      ])
+      expect(client.endpoints.sort).to eq(%i[
+                                            basic_pages
+                                            blog_posts
+                                            blogs
+                                            calendars
+                                            campaign_data
+                                            contact_types
+                                            contacts
+                                            donations
+                                            events
+                                            exports
+                                            imports
+                                            lists
+                                            memberships
+                                            page_attachments
+                                            paths
+                                            people
+                                            people_tags
+                                            precincts
+                                            sites
+                                            survey_responses
+                                            surveys
+                                            webhooks
+                                          ])
     end
   end
 
   describe '#base_url' do
-
     it 'should contain the nation slug' do
       expect(client.base_url).to eq('https://organizeralexandreschmitt.nationbuilder.com')
     end
   end
 
   describe '#call' do
-
     it 'should handle a parametered GET' do
       VCR.use_cassette('parametered_get') do
         response = client.call(:basic_pages, :index, site_slug: 'organizeralexandreschmitt', limit: 11)
@@ -99,7 +94,6 @@ describe NationBuilder::Client do
     end
 
     context 'fire_webhooks' do
-
       it 'should disable webhooks' do
         params = {
           fire_webhooks: false,
@@ -132,12 +126,11 @@ describe NationBuilder::Client do
 
         client.call(:people, :create, params)
       end
-
     end
 
     it 'should handle a DELETE' do
       params = {
-        id: 278881
+        id: 278_881
       }
 
       response = VCR.use_cassette('delete') do
@@ -151,18 +144,18 @@ describe NationBuilder::Client do
   describe '#classify_response_error' do
     it 'should account for rate limits' do
       response = double(code: 429, body: 'rate limiting')
-      expect(client.classify_response_error(response).class).
-        to eq(NationBuilder::RateLimitedError)
+      expect(client.classify_response_error(response).class)
+        .to eq(NationBuilder::RateLimitedError)
     end
     it 'should account for client errors' do
       response = double(code: 404, body: '404ing')
-      expect(client.classify_response_error(response).class).
-        to eq(NationBuilder::ClientError)
+      expect(client.classify_response_error(response).class)
+        .to eq(NationBuilder::ClientError)
     end
     it 'should account for client errors' do
       response = double(code: 500, body: '500ing')
-      expect(client.classify_response_error(response).class).
-        to eq(NationBuilder::ServerError)
+      expect(client.classify_response_error(response).class)
+        .to eq(NationBuilder::ServerError)
     end
   end
 
@@ -175,7 +168,7 @@ describe NationBuilder::Client do
 
     it 'should reraise non-rate limiting execeptions' do
       expect(httpclient).to receive(:send)
-      expect(client).to receive(:parse_response_body) { raise StandardError.new('boom') }
+      expect(client).to receive(:parse_response_body) { raise StandardError, 'boom' }
       expect do
         client.perform_request_with_retries(nil, nil, nil)
       end.to raise_error(StandardError)
@@ -186,15 +179,13 @@ describe NationBuilder::Client do
       expect(Kernel).to receive(:sleep)
 
       allow(client).to receive(:parse_response_body) do
-        unless @count
-          @count ||= 0
-        else
+        if @count
           @count += 1
+        else
+          @count ||= 0
         end
 
-        if @count < 1
-          raise NationBuilder::RateLimitedError.new
-        end
+        raise NationBuilder::RateLimitedError if @count < 1
       end
 
       expect do
@@ -207,7 +198,7 @@ describe NationBuilder::Client do
       expect(Kernel).to receive(:sleep).twice
 
       allow(client).to receive(:parse_response_body) do
-        raise NationBuilder::RateLimitedError.new
+        raise NationBuilder::RateLimitedError
       end
 
       expect do

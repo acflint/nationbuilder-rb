@@ -1,7 +1,5 @@
 class ApiSpec::Spec
-
   endpoint 'People' do |people|
-
     people.method('Index') do |method|
       method.synopsis = 'Returns a list of people'
       method.http_method = 'GET'

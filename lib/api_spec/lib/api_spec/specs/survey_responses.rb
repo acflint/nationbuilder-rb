@@ -1,7 +1,5 @@
 class ApiSpec::Spec
-
   endpoint 'Survey Responses' do |surveys|
-
     surveys.method('Index') do |m|
       m.synopsis = 'Lists all survey responses'
       m.http_method = 'GET'

@@ -1,7 +1,5 @@
 class ApiSpec::Spec
-
   endpoint 'Page Attachments' do |pa|
-
     pa.method('Index') do |method|
       method.synopsis = "Returns a list of a page's file attachments"
       method.http_method = 'GET'

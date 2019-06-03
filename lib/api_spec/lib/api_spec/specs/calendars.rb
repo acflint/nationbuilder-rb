@@ -1,7 +1,5 @@
 class ApiSpec::Spec
-
   endpoint 'Calendars' do |bp|
-
     bp.method('Index') do |m|
       m.synopsis = 'Shows a list of calendars'
       m.http_method = 'GET'

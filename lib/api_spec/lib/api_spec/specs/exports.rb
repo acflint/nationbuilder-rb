@@ -1,7 +1,5 @@
 class ApiSpec::Spec
-
   endpoint 'Exports' do |export|
-
     export.method('Export List') do |method|
       method.synopsis = 'Starts an export of a list'
       method.http_method = 'POST'

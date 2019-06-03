@@ -1,7 +1,5 @@
 class ApiSpec::Spec
-
   endpoint 'Events' do |event|
-
     event.method('Index') do |method|
       method.synopsis = 'Returns a list of events'
       method.http_method = 'GET'

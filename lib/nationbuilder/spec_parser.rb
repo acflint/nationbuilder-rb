@@ -1,5 +1,4 @@
 class NationBuilder::SpecParser
-
   def self.parse(spec_path)
     spec = JSON.parse(File.read(spec_path))
     endpoints = []
@@ -24,5 +23,4 @@ class NationBuilder::SpecParser
 
     endpoints
   end
-
 end

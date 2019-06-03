@@ -1,7 +1,5 @@
 class ApiSpec::Spec
-
   endpoint 'Precincts' do |precinct|
-
     precinct.method('Index') do |method|
       method.synopsis = 'Returns a list of current precincts'
       method.http_method = 'GET'

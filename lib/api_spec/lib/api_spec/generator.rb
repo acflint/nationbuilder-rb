@@ -24,9 +24,7 @@ module ApiSpec
 
       hash = Hash[pairs]
 
-      if nested_name
-        hash[nested_name.to_s] = send(nested_name).map { |obj| obj.to_hash }
-      end
+      hash[nested_name.to_s] = send(nested_name).map(&:to_hash) if nested_name
 
       hash
     end
@@ -34,35 +32,35 @@ module ApiSpec
     def self.init(base)
       base.send(:attr_accessor, *base::JSON_NAMES.keys)
       base.send(:attr_accessor, base.nested_name) if base.nested_name
-      base.send(:define_method, base.nested_adder_name) do |name, &block|
-        obj = nested_class.new(name)
-        block.call(obj)
-        send(nested_name) << obj
-      end if base.nested_adder_name
+      if base.nested_adder_name
+        base.send(:define_method, base.nested_adder_name) do |name, &block|
+          obj = nested_class.new(name)
+          block.call(obj)
+          send(nested_name) << obj
+        end
+      end
     end
   end
 
   class Parameter < APIObject
-
     JSON_NAMES = {
       name: 'Name',
       required: 'Required',
       default: 'Default',
       type: 'Type',
       description: 'Description'
-    }
+    }.freeze
 
     init(self)
   end
 
   class Method < APIObject
-
     JSON_NAMES = {
       name: 'MethodName',
       synopsis: 'Synopsis',
       http_method: 'HTTPMethod',
       uri: 'URI'
-    }
+    }.freeze
 
     self.nested_name = :parameters
     self.nested_adder_name = :parameter
@@ -72,10 +70,9 @@ module ApiSpec
   end
 
   class Endpoint < APIObject
-
     JSON_NAMES = {
       name: 'name'
-    }
+    }.freeze
 
     self.nested_name = :methods
     self.nested_adder_name = :method

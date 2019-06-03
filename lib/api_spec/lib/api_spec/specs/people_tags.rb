@@ -1,7 +1,5 @@
 class ApiSpec::Spec
-
   endpoint 'People Tags' do |tags|
-
     tags.method('Index') do |method|
       method.synopsis = 'Returns a list of previously used tags'
       method.http_method = 'GET'

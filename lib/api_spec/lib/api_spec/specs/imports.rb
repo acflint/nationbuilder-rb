@@ -1,7 +1,5 @@
 class ApiSpec::Spec
-
   endpoint 'Imports' do |import|
-
     import.method('Show') do |method|
       method.synopsis = 'Shows the status of an import'
       method.http_method = 'GET'

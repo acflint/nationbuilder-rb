@@ -1,7 +1,5 @@
 class ApiSpec::Spec
-
   endpoint 'Lists' do |lists|
-
     lists.method('Index') do |method|
       method.synopsis = 'Returns a list of created custom lists'
       method.http_method = 'GET'
