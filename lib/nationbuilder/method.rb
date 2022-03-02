@@ -36,9 +36,17 @@ class NationBuilder::Method
   end
 
   def nonmethod_args(args)
-    args.each_with_object({}) do |(k, v), a|
-      a[k] = v unless parameters.include?(k)
+    a = {}
+    args.each do |k, v|
+      if k == :custom_values
+        v.each do |custom_k, custom_v|
+          a[:"custom_values[#{custom_k}]"] = custom_v
+        end
+      else
+        a[k] = v unless parameters.include?(k)
+      end
     end
+    a
   end
 
 end
