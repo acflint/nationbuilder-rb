@@ -42,6 +42,7 @@ describe NationBuilder::Client do
         :paths,
         :people,
         :people_tags,
+        :petitions,
         :precincts,
         :sites,
         :survey_responses,
@@ -182,7 +183,7 @@ describe NationBuilder::Client do
     it 'should return a response if the rate limit is eventually dropped' do
       expect(httpclient).to receive(:send).twice
       expect(Kernel).to receive(:sleep)
-
+      allow(client).to receive(:response).and_return(double(header: { 'Retry-After' => [1] }))
       allow(client).to receive(:parse_response_body) do
         unless @count
           @count ||= 0
@@ -204,6 +205,7 @@ describe NationBuilder::Client do
       expect(httpclient).to receive(:send).twice
       expect(Kernel).to receive(:sleep).twice
 
+      allow(client).to receive(:response).and_return(double(header: { 'Retry-After' => [1] }))
       allow(client).to receive(:parse_response_body) do
         raise NationBuilder::RateLimitedError.new
       end
