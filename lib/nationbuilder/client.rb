@@ -83,7 +83,8 @@ class NationBuilder::Client
         parsed_response = parse_response_body(response)
       rescue NationBuilder::RateLimitedError => e
         exception_to_reraise = e
-        Kernel.sleep(RETRY_DELAY * 2**i)
+        retry_after = response.header.fetch("Retry-After", [RETRY_DELAY]).first.to_i
+        Kernel.sleep(retry_after)
       rescue => e
         raise e
       else
