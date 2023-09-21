@@ -108,19 +108,13 @@ class NationBuilder::Client
   end
 
   def classify_response_error(response)
-    body = if response.body.include?('DOCTYPE html')
-             html_doc = Nokogiri::HTML(response.body)
-             html_doc.search('body .message')[0].text.strip
-           else
-             response.body
-           end
-
-    if response.code == 429
-      NationBuilder::RateLimitedError.new(body)
-    elsif response.code.to_s.start_with?('4')
-      NationBuilder::ClientError.new(body)
-    elsif response.code.to_s.start_with?('5')
-      NationBuilder::ServerError.new(body)
+    case
+    when response.code == 429
+      NationBuilder::RateLimitedError.new(response.body)
+    when response.code.to_s.start_with?('4')
+      NationBuilder::ClientError.new(response.body)
+    when response.code.to_s.start_with?('5')
+      NationBuilder::ServerError.new(response.body)
     end
   end
 
