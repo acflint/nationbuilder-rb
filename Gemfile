@@ -1,6 +1,7 @@
 source 'https://rubygems.org'
 
 gem 'httpclient', '~> 2.7'
+gem 'pry'
 
 group :development do
   gem 'rake', '~> 12.3'
