@@ -91,14 +91,14 @@ Gem::Specification.new do |s|
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0')
       s.add_runtime_dependency('httpclient', ['~> 2.7'])
-      s.add_development_dependency('rake', ['~> 10.4'])
+      s.add_development_dependency('rake', '~> 12.3')
       s.add_development_dependency('rspec', ['~> 3.2'])
       s.add_development_dependency('simplecov', ['~> 0.8'])
       s.add_development_dependency('vcr', ['~> 2.9'])
       s.add_development_dependency('webmock', ['~> 1.18'])
     else
       s.add_dependency('httpclient', ['~> 2.7'])
-      s.add_dependency('rake', ['~> 10.4'])
+      s.add_dependency('rake', '~> 12.3')
       s.add_dependency('rspec', ['~> 3.2'])
       s.add_dependency('simplecov', ['~> 0.8'])
       s.add_dependency('vcr', ['~> 2.9'])
@@ -106,7 +106,7 @@ Gem::Specification.new do |s|
     end
   else
     s.add_dependency('httpclient', ['~> 2.7'])
-    s.add_dependency('rake', ['~> 10.4'])
+    s.add_dependency('rake', '~> 12.3')
     s.add_dependency('rspec', ['~> 3.2'])
     s.add_dependency('simplecov', ['~> 0.8'])
     s.add_dependency('vcr', ['~> 2.9'])
