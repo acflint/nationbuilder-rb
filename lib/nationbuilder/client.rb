@@ -1,15 +1,14 @@
 class NationBuilder::Client
-
   def initialize(nation_name, api_key, opts = {})
     @nation_name = nation_name
     @api_key = api_key
     @name_to_endpoint = {}
-    @base_url = opts[:base_url] || 'https://:nation_name.nationbuilder.com'
+    @base_url = opts[:base_url] || "https://:nation_name.nationbuilder.com"
     @retries = opts[:retries] || 8
     @http_client = opts[:http_client] || HTTPClient.new
 
     if @retries < 0
-      raise 'Retries must be at least zero'
+      raise "Retries must be at least zero"
     end
 
     parsed_endpoints.each do |endpoint|
@@ -19,7 +18,7 @@ class NationBuilder::Client
 
   def parsed_endpoints
     NationBuilder::SpecParser
-      .parse(File.join(File.dirname(__FILE__), '..', 'api_spec/spec.json'))
+      .parse(File.join(File.dirname(__FILE__), "..", "api_spec/spec.json"))
   end
 
   class InvalidEndpoint < ArgumentError; end
@@ -35,7 +34,7 @@ class NationBuilder::Client
   end
 
   def base_url
-    @base_url.gsub(':nation_name', @nation_name)
+    @base_url.gsub(":nation_name", @nation_name)
   end
 
   RETRY_DELAY = 0.1 # seconds
@@ -45,9 +44,9 @@ class NationBuilder::Client
 
     request_args = {
       header: {
-        'Accept'        => 'application/json',
-        'Content-Type'  => 'application/json',
-        'Authorization' => "Bearer #{@api_key}"
+        "Accept" => "application/json",
+        "Content-Type" => "application/json",
+        "Authorization" => "Bearer #{@api_key}"
       },
       query: {}
     }
@@ -64,13 +63,13 @@ class NationBuilder::Client
     perform_request_with_retries(method, url, request_args)
   end
 
-  def call(endpoint_name, method_name, args={})
+  def call(endpoint_name, method_name, args = {})
     endpoint = self[endpoint_name]
     method = endpoint[method_name]
     nonmethod_args = method.nonmethod_args(args)
     method_args = method.method_args(args)
     method.validate_args(method_args)
-    return raw_call(method.uri, method.http_method, nonmethod_args, args)
+    raw_call(method.uri, method.http_method, nonmethod_args, args)
   end
 
   def perform_request_with_retries(method, url, request_args)
@@ -78,19 +77,16 @@ class NationBuilder::Client
     exception_to_reraise = nil
 
     (@retries + 1).times do |i|
-      begin
-        set_response(@http_client.send(method, url, request_args))
-        parsed_response = parse_response_body(response)
-      rescue NationBuilder::RateLimitedError => e
-        exception_to_reraise = e
-        retry_after = response.header["Retry-After"]&.first&.to_i || (RETRY_DELAY * 2**i)
-        Kernel.sleep(retry_after)
-      rescue => e
-        raise e
-      else
-        exception_to_reraise = nil
-        break
-      end
+      set_response(@http_client.send(method, url, request_args))
+      parsed_response = parse_response_body(response)
+    rescue NationBuilder::RateLimitedError => e
+      exception_to_reraise = e
+      retry_after_header = response.header["Retry-After"]&.first&.to_i
+      retry_after = retry_after_header&.positive? ? retry_after_header : RETRY_DELAY * 2**i
+      Kernel.sleep(retry_after)
+    else
+      exception_to_reraise = nil
+      break
     end
 
     # If the retry cycle ended with an error, reraise it
@@ -109,12 +105,11 @@ class NationBuilder::Client
   end
 
   def classify_response_error(response)
-    case
-    when response.code == 429
+    if response.code == 429
       NationBuilder::RateLimitedError.new(response.body)
-    when response.code.to_s.start_with?('4')
+    elsif response.code.to_s.start_with?("4")
       NationBuilder::ClientError.new(response.body)
-    when response.code.to_s.start_with?('5')
+    elsif response.code.to_s.start_with?("5")
       NationBuilder::ServerError.new(response.body)
     end
   end
@@ -123,8 +118,8 @@ class NationBuilder::Client
     error = classify_response_error(response)
     raise error if error
 
-    content_type = response.header['Content-Type'].first
-    unless content_type && content_type.include?('application/json')
+    content_type = response.header["Content-Type"].first
+    unless content_type && content_type.include?("application/json")
       return true
     end
 
@@ -133,7 +128,7 @@ class NationBuilder::Client
 
   def print_all_descriptions
     endpoints.each do |endpoint_name|
-      self.print_description(endpoint_name)
+      print_description(endpoint_name)
       puts
     end
   end
@@ -141,11 +136,11 @@ class NationBuilder::Client
   def print_description(endpoint_name)
     endpoint_name = endpoint_name.to_sym
 
-    unless self.endpoints.include?(endpoint_name)
+    unless endpoints.include?(endpoint_name)
       puts "Invalid endpoint name: #{endpoint_name}"
       puts
       puts "Valid endpoint names:"
-      self.endpoints.each do |endpoint|
+      endpoints.each do |endpoint|
         puts "  #{endpoint}"
       end
       return
@@ -163,7 +158,7 @@ class NationBuilder::Client
       puts "  Description: #{method.description}"
       required_params = method.parameters.map { |p| p }
       if required_params.any?
-        puts "  Required parameters: #{required_params.join(', ')}"
+        puts "  Required parameters: #{required_params.join(", ")}"
       end
     end
   end
@@ -177,5 +172,4 @@ class NationBuilder::Client
       JSON.parse(body)
     end
   end
-
 end
