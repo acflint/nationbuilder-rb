@@ -84,6 +84,7 @@ class NationBuilder::Client
       retry_after_header = response.header["Retry-After"]&.first&.to_i
       retry_after = retry_after_header&.positive? ? retry_after_header : RETRY_DELAY * 2**i
       Kernel.sleep(retry_after)
+      retry
     else
       exception_to_reraise = nil
       break
