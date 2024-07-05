@@ -1,7 +1,5 @@
 class ApiSpec::Spec
-
   endpoint 'Paths' do |paths|
-
     paths.method('Index') do |method|
       method.synopsis = 'Returns a list of paths and path steps'
       method.http_method = 'GET'

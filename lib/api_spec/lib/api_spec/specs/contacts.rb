@@ -1,7 +1,5 @@
 class ApiSpec::Spec
-
   endpoint 'Contacts' do |c|
-
     c.method('Index') do |m|
       m.synopsis = "View a paginated list of a person's contacts"
       m.http_method = 'GET'

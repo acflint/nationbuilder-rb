@@ -1,7 +1,5 @@
 class ApiSpec::Spec
-
   endpoint 'Donations' do |donation|
-
     donation.method('Index') do |method|
       method.synopsis = 'Returns a list of donations'
       method.http_method = 'GET'

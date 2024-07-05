@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe NationBuilder::Paginator do
-
   let(:client) do
     NationBuilder::Client.new('testnation',
                               '03c22256c06ed11f6bee83673addf26e02a86caa1a5127f4e0815be7223fe4a3')

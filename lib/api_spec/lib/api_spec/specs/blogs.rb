@@ -1,7 +1,5 @@
 class ApiSpec::Spec
-
   endpoint 'Blogs' do |bp|
-
     bp.method('Index') do |m|
       m.synopsis = 'Shows a list of all blogs'
       m.http_method = 'GET'

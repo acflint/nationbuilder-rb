@@ -6,4 +6,4 @@ task :generate_spec do
   ApiSpec::Spec.write_spec('spec.json')
 end
 
-task :default => [:generate_spec]
+task default: [:generate_spec]

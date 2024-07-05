@@ -1,5 +1,4 @@
 class NationBuilder::Endpoint
-
   def initialize(name)
     @name = name
     @name_to_method = {}
@@ -21,8 +20,8 @@ class NationBuilder::Endpoint
 
   def [](method_name)
     m = @name_to_method[method_name]
-    raise InvalidMethod.new(method_name) if m.nil?
+    raise InvalidMethod, method_name if m.nil?
+
     m
   end
-
 end

@@ -1,5 +1,4 @@
 class NationBuilder::Method
-
   attr_reader :uri, :http_method, :description
 
   def initialize(name, http_method, uri, description)
@@ -23,10 +22,7 @@ class NationBuilder::Method
   end
 
   def validate_args(args)
-    if Set.new(args.keys) != Set.new(parameters)
-      raise ArgumentError
-        .new("Required args: #{parameters.join(', ')}. Provided args: #{args.keys.join(', ')}")
-    end
+    raise ArgumentError, "Required args: #{parameters.join(', ')}. Provided args: #{args.keys.join(', ')}" if Set.new(args.keys) != Set.new(parameters)
   end
 
   def method_args(args)
@@ -48,5 +44,4 @@ class NationBuilder::Method
     end
     a
   end
-
 end

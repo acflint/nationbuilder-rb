@@ -1,7 +1,5 @@
 class ApiSpec::Spec
-
   endpoint 'Memberships' do |memberships|
-    
     memberships.method('Index') do |method|
       method.synopsis = 'Lists all memberships for a person'
       method.http_method = 'GET'

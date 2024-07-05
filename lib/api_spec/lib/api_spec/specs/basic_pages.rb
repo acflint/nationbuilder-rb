@@ -1,7 +1,5 @@
 class ApiSpec::Spec
-
   endpoint 'Basic Pages' do |bp|
-
     bp.method('Index') do |m|
       m.synopsis = 'Shows a list of the basic pages in the system'
       m.http_method = 'GET'

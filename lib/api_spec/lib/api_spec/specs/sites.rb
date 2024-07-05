@@ -1,7 +1,5 @@
 class ApiSpec::Spec
-
   endpoint 'Sites' do |tags|
-
     tags.method('Index') do |method|
       method.synopsis = 'Returns a list of all sites'
       method.http_method = 'GET'

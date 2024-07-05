@@ -7,9 +7,8 @@ class NationBuilder::Client
     @retries = opts[:retries] || 8
     @http_client = opts[:http_client] || HTTPClient.new
 
-    if @retries < 0
-      raise "Retries must be at least zero"
-    end
+
+    raise 'Retries must be at least zero' if @retries < 0
 
     parsed_endpoints.each do |endpoint|
       @name_to_endpoint[endpoint.name] = endpoint
@@ -25,7 +24,8 @@ class NationBuilder::Client
 
   def [](endpoint)
     e = @name_to_endpoint[endpoint]
-    raise InvalidEndpoint.new(endpoint) if e.nil?
+    raise InvalidEndpoint, endpoint if e.nil?
+
     e
   end
 
@@ -54,9 +54,8 @@ class NationBuilder::Client
     if method == :get
       request_args[:query].merge!(NationBuilder::Utils::QueryParams.encode(body))
     else
-      if !body[:fire_webhooks].nil?
-        request_args[:query][:fire_webhooks] = body[:fire_webhooks]
-      end
+      body[:access_token] = @api_key
+      request_args[:query][:fire_webhooks] = body[:fire_webhooks] unless body[:fire_webhooks].nil?
       request_args[:body] = JSON(body)
     end
 
@@ -139,8 +138,8 @@ class NationBuilder::Client
 
     unless endpoints.include?(endpoint_name)
       puts "Invalid endpoint name: #{endpoint_name}"
-      puts
       puts "Valid endpoint names:"
+
       endpoints.each do |endpoint|
         puts "  #{endpoint}"
       end
@@ -148,9 +147,9 @@ class NationBuilder::Client
     end
 
     endpoint_str = "Endpoint: #{endpoint_name}"
-    puts "=" * endpoint_str.length
+    puts '=' * endpoint_str.length
     puts endpoint_str
-    puts "=" * endpoint_str.length
+    puts '=' * endpoint_str.length
 
     self[endpoint_name].methods.each do |method_name|
       puts
@@ -158,16 +157,15 @@ class NationBuilder::Client
       puts "  Method: #{method_name}"
       puts "  Description: #{method.description}"
       required_params = method.parameters.map { |p| p }
-      if required_params.any?
-        puts "  Required parameters: #{required_params.join(", ")}"
-      end
+
+      puts "  Required parameters: #{required_params.join(', ')}" if required_params.any?
     end
   end
 
   private
 
   def parsed_body(body)
-    if body.length == 0
+    if body.empty?
       {}
     else
       JSON.parse(body)

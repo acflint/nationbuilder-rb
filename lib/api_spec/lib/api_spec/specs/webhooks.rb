@@ -1,7 +1,5 @@
 class ApiSpec::Spec
-
   endpoint 'Webhooks' do |surveys|
-
     surveys.method('Index') do |m|
       m.synopsis = 'Lists all webhooks'
       m.http_method = 'GET'
